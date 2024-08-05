@@ -11,8 +11,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private FixedJoystick movementJoystick;
     [SerializeField] private Transform cameraTransform;
 
+    public bool canMove;
     private void Start()
     {
+        canMove = true;
         _characterController = GetComponent<CharacterController>();
     }
 
@@ -36,7 +38,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Move();
+        if (canMove)
+        {
+            Move();
+        }
     }
 
     private void Look()
