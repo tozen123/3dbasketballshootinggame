@@ -11,9 +11,16 @@ public class CameraSystem : MonoBehaviour
     private Vector3 _currentVelocity = Vector3.zero;
 
 
+    private void Start()
+    {
+        Application.targetFrameRate = 60;
+    }
 
+    // set camera offset by getting the position 
     private void Awake() => _offset = transform.position - target.position;
 
+
+    // smooth follow the target
     private void LateUpdate()
     {
         Vector3 targetPosition = target.position + _offset;

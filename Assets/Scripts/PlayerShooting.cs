@@ -73,6 +73,9 @@ public class PlayerShooting : MonoBehaviour
         {
             Debug.Log("Slider Value: " + chargeSlider.value);
 
+            Ball.GetComponent<BallController>().isStateFlying = true;
+
+
             T += Time.deltaTime;
             float duration = 0.86f;
             float t01 = T / duration;
@@ -98,6 +101,7 @@ public class PlayerShooting : MonoBehaviour
             {
                 IsBallFlying = false;
                 Ball.GetComponent<Rigidbody>().isKinematic = false;
+                Ball.GetComponent<BallController>().isStateFlying = false;
 
                 Ball = null;
 

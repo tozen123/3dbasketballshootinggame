@@ -6,12 +6,20 @@ public class PlayerMovement : MonoBehaviour
 {
     private CharacterController _characterController;
     private Vector3 _playerInput;
+
+    [Header("Attributes")]
     [SerializeField] public float movementSpeed = 10f;
     [SerializeField] private float turningSpeed = 360f;
+
+    [Header("Joystick")]
     [SerializeField] private FixedJoystick movementJoystick;
+
+    [Header("Camera")]
     [SerializeField] private Transform cameraTransform;
 
+    [Header("Misc")]
     public bool canMove;
+
     private void Start()
     {
         canMove = true;
@@ -24,6 +32,8 @@ public class PlayerMovement : MonoBehaviour
         Look();
     }
 
+
+    // get the joystick input
     private void GetPlayerInput()
     {
         Vector3 right = cameraTransform.right;
@@ -44,6 +54,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    // rotate the player base on the input
     private void Look()
     {
         if (_playerInput != Vector3.zero)
@@ -55,6 +66,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    // move the player using the charactercontroller 
     private void Move()
     {
         Vector3 movement = _playerInput.normalized * movementSpeed * Time.deltaTime;
