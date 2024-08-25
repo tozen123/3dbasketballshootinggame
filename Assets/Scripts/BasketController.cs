@@ -12,6 +12,7 @@ public class BasketController : MonoBehaviour
         if(other.gameObject.tag == "Ball")
         {
             cameraController.start = true;
+            PlayerPointingSystem.Instance.AddPoint(1);
         }
     }
 }

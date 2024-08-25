@@ -19,7 +19,8 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Misc")]
     public bool canMove;
-
+    public bool haveBall;
+    public Animator animator;
     private void Start()
     {
         canMove = true;
@@ -28,6 +29,14 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        if (haveBall)
+        {
+            animator.SetBool("withBall", true);
+        }
+        else 
+        {
+            animator.SetBool("withBall", false);
+        }
         GetPlayerInput();
         Look();
     }
@@ -71,5 +80,29 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 movement = _playerInput.normalized * movementSpeed * Time.deltaTime;
         _characterController.Move(movement);
+
+        bool isMoving = movement.magnitude > 0;
+
+        if (isMoving)
+        {
+            if (haveBall)
+            {
+                animator.SetBool("isRunningWithBall", true);
+                animator.SetBool("isRunning", false); 
+            }
+            else
+            {
+                animator.SetBool("isRunningWithBall", false); 
+                animator.SetBool("isRunning", true);
+            }
+        }
+        else
+        {
+            animator.SetBool("isRunningWithBall", false);
+            animator.SetBool("isRunning", false);
+        }
+
     }
+
+    
 }

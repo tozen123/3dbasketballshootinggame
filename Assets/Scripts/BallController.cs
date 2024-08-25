@@ -4,8 +4,18 @@ using UnityEngine;
 
 public class BallController : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] private TrailRenderer trailRenderer;
+    [SerializeField] private Rigidbody rigidbody;
+
+
+    [Header("Attributes")]
+    public bool OnPlayer;
+    public SphereCollider mainCollider;
     public bool isStateFlying = false;
+
+
+    // Privates
     private bool isCoroutineRunning = false;
 
     void Start()
@@ -23,13 +33,27 @@ public class BallController : MonoBehaviour
                 StopCoroutine(DisableTrailRendererWithDelay());
                 isCoroutineRunning = false;
             }
+            mainCollider.enabled = true;
+
+            rigidbody.isKinematic = true;
         }
         else
         {
+            rigidbody.isKinematic = false;
+
             if (!isCoroutineRunning)
             {
                 StartCoroutine(DisableTrailRendererWithDelay());
             }
+        }
+
+        if(OnPlayer)
+        {
+            mainCollider.enabled = false;
+        }
+        else
+        {
+            mainCollider.enabled = true;
         }
     }
 

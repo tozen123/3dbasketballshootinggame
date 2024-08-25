@@ -5,33 +5,57 @@ using UnityEngine.UI;
 [RequireComponent(typeof(PlayerMovement))]
 public class PlayerShooting : MonoBehaviour
 {
-    public Transform Ball;
-    public Transform PosDribble;
-    public Transform PosOverHead;
-    public Transform Target;
 
-    public Button chargeShootBallButton;
-    public Button launchBallButton;
+    [Header("References")]
 
-    public PlayerMovement playerMovement;
+    [SerializeField] private Transform Ball;
+    [SerializeField] private Transform PosDribble;
+    [SerializeField] private Transform PosOverHead;
+    [SerializeField] private Transform Target;
 
-    public float timeRange;
 
-    private bool IsBallInHands = true;
-    private bool IsBallFlying = false;
-    private float T = 0;
-    private bool isCharging = false;
+    [Header("UI References")]
+    [SerializeField] private Button chargeShootBallButton;
+    [SerializeField] private Button launchBallButton;
 
-    public Slider chargeSlider;
-    public float sliderSpeed = 2.0f;
-    private bool isIncreasing = true;
+    [Header("Script References")]
+    [SerializeField] private PlayerMovement playerMovement;
 
-    float errorRange = 4.0f;
-    float errorRangeX;
-    float errorRangeZ;
+    [Header("Shooting Attributes")]
+    [SerializeField] private float timeRange;
 
+    [SerializeField] private bool IsBallInHands = true;
+    [SerializeField] private bool IsBallFlying = false;
+    [SerializeField] private float T = 0;
+    [SerializeField] private bool isCharging = false;
+
+
+    [SerializeField] private float ballTravelSpeed;
+
+    [Header("Shooting Mechanics Attributes")]
+    [SerializeField] private Slider chargeSlider;
+    [SerializeField] private float sliderSpeed = 2.0f;
+    [SerializeField] private bool isIncreasing = true;
+
+
+ 
+
+    [Header("Dribbling Attributes")]
+    [SerializeField] private float dribblingSpeed = 5f;
+    [SerializeField] private float dribblingHeight = 2f;
+
+    [Header("Animator Reference")]
+    public Animator animator;
+
+
+    // privates
+    private float errorRange = 6.0f;
+    private float errorRangeX;
+    private CameraSystem cameraSystem;
     void Start()
     {
+        cameraSystem = Camera.main.GetComponent<CameraSystem>();
+
         launchBallButton.gameObject.SetActive(false);
         chargeSlider.gameObject.SetActive(false);
         chargeShootBallButton.onClick.AddListener(StartCharging);
@@ -61,9 +85,13 @@ public class PlayerShooting : MonoBehaviour
             }
             else
             {
-                Ball.position = PosDribble.position + Vector3.up * Mathf.Abs(Mathf.Sin(Time.time * 5));
-
+                Ball.position = PosDribble.position + new Vector3(0, dribblingHeight, 0) * Mathf.Abs(Mathf.Sin(Time.time * dribblingSpeed));
+                playerMovement.haveBall = true;
             }
+        }
+        else
+        {
+            playerMovement.haveBall = false;
         }
 
         // condition if the ball is threw and in the air, it would run the logic that it will goes towards
@@ -75,14 +103,18 @@ public class PlayerShooting : MonoBehaviour
 
             Ball.GetComponent<BallController>().isStateFlying = true;
 
+            
 
             T += Time.deltaTime;
-            float duration = 0.86f;
+            //float duration = 0.86f;
+            float duration = ballTravelSpeed;
             float t01 = T / duration;
 
             Vector3 A = PosOverHead.position;
             Vector3 B;
 
+            // slider mechanics for accuracy of the shot
+            // also determines if the ball is going to the net accurately or not
             if (chargeSlider.value > 0.50f && chargeSlider.value < 0.60f)
             {
                 B = Target.position;
@@ -90,21 +122,28 @@ public class PlayerShooting : MonoBehaviour
             else
             {
                
-                B = Target.position + new Vector3(errorRangeX, 0, errorRangeZ);
-            }
-            Debug.Log("Slider Value: " + B);
-            Vector3 pos = Vector3.Lerp(A, B, t01);
-            Vector3 arc = Vector3.up * 5 * Mathf.Sin(t01 * Mathf.PI); 
-            Ball.position = pos + arc;
+                B = Target.position + new Vector3(errorRangeX, 0, -3.0f);
 
+                PlayerPointingSystem.Instance.ResetPoint();
+            }
+
+
+            // make the ball travel in arc position 
+            Debug.Log("Slider Value: " + B);
+            Vector3 pos = Vector3.Lerp(A, B, t01); // add lerp to the ball overhead position to the target destination which is the net
+            Vector3 arc = Vector3.up * 5 * Mathf.Sin(t01 * Mathf.PI);  // this line adds arc path to the ball to travel
+            Ball.position = pos + arc; // move the ball
+
+            // if the ball completed its travelling using the interpolation variable t01, set the ball into not flying and etc.
             if (t01 >= timeRange)
             {
                 IsBallFlying = false;
                 Ball.GetComponent<Rigidbody>().isKinematic = false;
                 Ball.GetComponent<BallController>().isStateFlying = false;
-
+                Ball.GetComponent<BallController>().OnPlayer = false;
                 Ball = null;
-
+                
+                cameraSystem.SetTarget(transform);
             }
             Debug.Log(t01);
         }
@@ -116,6 +155,7 @@ public class PlayerShooting : MonoBehaviour
         }
     }
 
+    // Slider Mechanics
     void Charging()
     {
         if (isIncreasing)
@@ -150,6 +190,7 @@ public class PlayerShooting : MonoBehaviour
         {
             return;
         }
+        animator.SetBool("ShootCharge", true);
 
         chargeShootBallButton.gameObject.SetActive(false);
 
@@ -184,7 +225,9 @@ public class PlayerShooting : MonoBehaviour
     {
         if (IsBallInHands)
         {
+            cameraSystem.SetTarget(Ball);
 
+            animator.SetBool("ShootCharge", false);
             chargeShootBallButton.gameObject.SetActive(true);
             launchBallButton.gameObject.SetActive(false);
 
@@ -197,7 +240,7 @@ public class PlayerShooting : MonoBehaviour
             IsBallInHands = false;
 
             errorRangeX = Random.Range(-errorRange, errorRange);
-            errorRangeZ = Random.Range(-errorRange, errorRange);
+            //errorRangeZ = Random.Range(-errorRange, errorRange);
 
             IsBallInHands = false;
             IsBallFlying = true;
@@ -218,6 +261,8 @@ public class PlayerShooting : MonoBehaviour
             {
                 Ball = other.gameObject.transform;
                 IsBallInHands = true;
+
+                other.gameObject.GetComponent<BallController>().OnPlayer = true;
             }
         }
     }
