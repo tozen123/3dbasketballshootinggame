@@ -6,6 +6,7 @@ using TMPro;
 
 public class PlayerPointingSystem : MonoBehaviour
 {
+    // Singleton, so that this class can be accessed everywhere 
     public static PlayerPointingSystem Instance { get; private set; }
 
     [Header("Attributes")]

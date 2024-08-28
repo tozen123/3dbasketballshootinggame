@@ -4,15 +4,21 @@ using UnityEngine;
 
 public class CameraSystem : MonoBehaviour
 {
-    private Vector3 _offset;
+
+    [Header("Attributes")]
     [SerializeField] private Vector3 _switchingOffset;
     [SerializeField] private Transform target;
     [SerializeField] private float smoothSpeed = 0.35f;
     [SerializeField] private float SwitchingSmoothSpeed = 0.65f;
+
+    //privates
+
     private Vector3 _currentVelocity = Vector3.zero;
 
     private float originalSmoothSpeed;
     private Vector3 originalOffset;
+    private Vector3 _offset;
+
 
     private void Start()
     {

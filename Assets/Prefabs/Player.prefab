@@ -2661,6 +2661,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShootPoints: 0
   pointTextIndicator: {fileID: 0}
+  animationDuration: 0.4
+  maxScale: 1.75
 --- !u!1 &8618126718600313434
 GameObject:
   m_ObjectHideFlags: 0

@@ -83,6 +83,7 @@ public class PlayerMovement : MonoBehaviour
 
         bool isMoving = movement.magnitude > 0;
 
+        // animations
         if (isMoving)
         {
             if (haveBall)
