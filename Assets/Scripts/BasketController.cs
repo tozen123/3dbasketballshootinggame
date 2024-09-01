@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class BasketController : MonoBehaviour
 {
-    [Header("Attributes")]
-    [SerializeField] private int pointToAdd;
 
 
     [Header("Camera")]
@@ -18,6 +16,10 @@ public class BasketController : MonoBehaviour
     [Header("Animator")]
     [SerializeField] private Animator animatorController;
 
+    [Header("Mode Controller")]
+    [SerializeField] private bool isArcade = false;
+    [SerializeField] private bool isPlay = false;
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Ball")
@@ -25,19 +27,31 @@ public class BasketController : MonoBehaviour
             PlayRandomSound();
 
             cameraController.start = true;
-            PlayerPointingSystem.Instance.AddPoint(pointToAdd);
-
+    
             animatorController.SetTrigger("Shot");
+
+            if (isArcade)
+            {
+                PlayerPointingSystem.Instance.AddPoint(1);
+            }
+
+            if (isPlay)
+            {
+                PlayerPointingSystem.Instance.AddPoint(10);
+
+            }
         }
+
+       
     }
 
     private void PlayRandomSound()
     {
         if (basketSounds.Length > 0)
         {
-            int randomIndex = Random.Range(0, basketSounds.Length); 
-            audioSource.clip = basketSounds[randomIndex];           
-            audioSource.Play();                                      
+            int randomIndex = Random.Range(0, basketSounds.Length);
+            audioSource.clip = basketSounds[randomIndex];
+            audioSource.Play();
         }
     }
 }

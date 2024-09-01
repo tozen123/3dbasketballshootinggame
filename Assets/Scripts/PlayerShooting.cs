@@ -47,6 +47,9 @@ public class PlayerShooting : MonoBehaviour
     [Header("Animator Reference")]
     public Animator animator;
 
+    [Header("Mode Controller")]
+    [SerializeField] private bool isArcade = false;
+    [SerializeField] private bool isPlay = false;
 
     // privates
     private float errorRange = 6.0f;
@@ -124,7 +127,14 @@ public class PlayerShooting : MonoBehaviour
                
                 B = Target.position + new Vector3(errorRangeX, 0, -3.0f);
 
-                PlayerPointingSystem.Instance.ResetPoint();
+                if (isArcade)
+                {
+                    PlayerPointingSystem.Instance.ResetPoint();
+                }
+                if (isPlay)
+                {
+                    PlayerPointingSystem.Instance.ResetStreak();
+                }
             }
 
 
@@ -144,6 +154,8 @@ public class PlayerShooting : MonoBehaviour
                 Ball = null;
                 
                 cameraSystem.SetTarget(transform);
+
+               
             }
             Debug.Log(t01);
         }

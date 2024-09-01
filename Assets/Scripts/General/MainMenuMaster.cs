@@ -8,4 +8,9 @@ public class MainMenuMaster : MonoBehaviour
     {
         LoadingScreenManager.Instance.LoadScene(scene_name);
     }
+
+    public void Play(string scene_name)
+    {
+        LoadingScreenManager.Instance.LoadScene(scene_name);
+    }
 }

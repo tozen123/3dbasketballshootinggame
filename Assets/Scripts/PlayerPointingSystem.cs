@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -11,29 +10,36 @@ public class PlayerPointingSystem : MonoBehaviour
 
     [Header("Attributes")]
     public int ShootPoints = 0;
+    public int StreakCount = 0;
+    public int StreakThreshold = 3;
+    public int StreakBonusPoints = 25;
 
     [Header("References")]
     [SerializeField] private TextMeshProUGUI pointTextIndicator;
+    [SerializeField] private RectTransform shotButton;
 
     [SerializeField] private float animationDuration = 0.5f;
     [SerializeField] private float maxScale = 1.5f;
 
+    [Header("Effects Attributes")]
+    [SerializeField] private float wiggleMagnitude;
+    [SerializeField] private float wiggleSpeed;
+
+
     private Vector3 originalScale;
+    private Coroutine wiggleCoroutine;
 
     private void Awake()
     {
-      
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); 
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Destroy(gameObject); 
+            Destroy(gameObject);
         }
-
-
     }
 
     private void Start()
@@ -51,26 +57,54 @@ public class PlayerPointingSystem : MonoBehaviour
         {
             return;
         }
-        if (ShootPoints.ToString().Equals("0"))
-        {
-            pointTextIndicator.text = "O";
 
-        } else
-        {
-            pointTextIndicator.text = ShootPoints.ToString();
+        // Convert ShootPoints to string and replace "0" with "O"
+        string pointsText = ShootPoints.ToString().Replace("0", "O");
+        pointTextIndicator.text = pointsText;
 
+        if (StreakCount >= StreakThreshold)
+        {
+            if (wiggleCoroutine == null) 
+            {
+                wiggleCoroutine = StartCoroutine(WiggleButton());
+            }
         }
+        else
+        {
+            if (wiggleCoroutine != null)
+            {
+                StopCoroutine(wiggleCoroutine);
+                wiggleCoroutine = null;
+                shotButton.transform.rotation = Quaternion.identity; 
+            }
+        }
+    }
+
+    public int GetPoint()
+    {
+        return ShootPoints;
     }
 
     public void AddPoint(int toAddPoints)
     {
+        if (StreakCount >= StreakThreshold)
+        {
+            toAddPoints += StreakBonusPoints;
+        }
+
         ShootPoints += toAddPoints;
+        StreakCount++;
         StartCoroutine(AnimateText());
     }
 
     public void ResetPoint()
     {
         ShootPoints = 0;
+    }
+
+    public void ResetStreak()
+    {
+        StreakCount = 0;
     }
 
     private IEnumerator AnimateText()
@@ -96,5 +130,17 @@ public class PlayerPointingSystem : MonoBehaviour
         }
 
         pointTextIndicator.rectTransform.localScale = originalScale;
+    }
+
+    private IEnumerator WiggleButton()
+    {
+        
+
+        while (true)
+        {
+            float angle = Mathf.Sin(Time.time * Mathf.PI * wiggleSpeed) * wiggleMagnitude;
+            shotButton.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+            yield return null;
+        }
     }
 }
