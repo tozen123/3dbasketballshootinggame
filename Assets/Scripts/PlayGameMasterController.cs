@@ -1,7 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro; 
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class PlayGameMasterController : MonoBehaviour
 {
@@ -9,6 +10,8 @@ public class PlayGameMasterController : MonoBehaviour
 
     [SerializeField] private string gameTitle = "Level ";
     [SerializeField] [TextArea] private string gameMessage = "Level ";
+
+    [SerializeField] private string nextLevel = "--";
 
     [SerializeField] private float gameDuration = 60f; 
     [SerializeField] private float gameTargetPoints; 
@@ -56,11 +59,23 @@ public class PlayGameMasterController : MonoBehaviour
     {
         if(PlayerPointingSystem.Instance.GetPoint() >= gameTargetPoints)
         {
-            WindowDialogSystem.Instance
-           .SetTitle("Game")
-           .SetMessage("Good Job! You reached the target points for this level. Lets go to the next level")
-           .OnClick(() => LoadingScreenManager.Instance.LoadScene("PlayLevel2"))
-           .Show();
+            if(SceneManager.GetActiveScene().name == "PlayLevel5")
+            {
+                WindowDialogSystem.Instance
+                  .SetTitle("Game")
+                  .SetMessage("You have finished the Play Mission. Lets go to results")
+                  .OnClick(() => LoadingScreenManager.Instance.LoadScene("PlayGameResult"))
+                  .Show();
+            }
+            else
+            {
+                WindowDialogSystem.Instance
+               .SetTitle("Game")
+               .SetMessage("Good Job! You reached the target points for this level. Lets go to the next level")
+               .OnClick(() => LoadingScreenManager.Instance.LoadScene(nextLevel))
+               .Show();
+            }
+            
         }
         else
         {

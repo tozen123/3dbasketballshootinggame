@@ -17,6 +17,7 @@ public class PlayerPointingSystem : MonoBehaviour
     [Header("References")]
     [SerializeField] private TextMeshProUGUI pointTextIndicator;
     [SerializeField] private RectTransform shotButton;
+    [SerializeField] private GameObject textOnFire;
 
     [SerializeField] private float animationDuration = 0.5f;
     [SerializeField] private float maxScale = 1.5f;
@@ -48,7 +49,11 @@ public class PlayerPointingSystem : MonoBehaviour
         {
             return;
         }
+
+        // Load the saved score from PlayerPrefs
+        ShootPoints = PlayerPrefs.GetInt("Play_ScorePoints", 0);
         originalScale = pointTextIndicator.rectTransform.localScale;
+        UpdatePointText();
     }
 
     private void Update()
@@ -58,24 +63,25 @@ public class PlayerPointingSystem : MonoBehaviour
             return;
         }
 
-        // Convert ShootPoints to string and replace "0" with "O"
-        string pointsText = ShootPoints.ToString().Replace("0", "O");
-        pointTextIndicator.text = pointsText;
-
         if (StreakCount >= StreakThreshold)
         {
-            if (wiggleCoroutine == null) 
+            if (wiggleCoroutine == null)
             {
                 wiggleCoroutine = StartCoroutine(WiggleButton());
             }
+
+            textOnFire.SetActive(true);
         }
         else
         {
+            textOnFire.SetActive(false);
+
+
             if (wiggleCoroutine != null)
             {
                 StopCoroutine(wiggleCoroutine);
                 wiggleCoroutine = null;
-                shotButton.transform.rotation = Quaternion.identity; 
+                shotButton.transform.rotation = Quaternion.identity;
             }
         }
     }
@@ -94,17 +100,39 @@ public class PlayerPointingSystem : MonoBehaviour
 
         ShootPoints += toAddPoints;
         StreakCount++;
+
+        // Save the updated score to PlayerPrefs
+        PlayerPrefs.SetInt("Play_ScorePoints", ShootPoints);
+        PlayerPrefs.Save(); // Ensures the points are saved to disk
+
         StartCoroutine(AnimateText());
+        UpdatePointText();
     }
 
     public void ResetPoint()
     {
         ShootPoints = 0;
+
+        // Reset the saved points in PlayerPrefs
+        PlayerPrefs.SetInt("Play_ScorePoints", ShootPoints);
+        PlayerPrefs.Save();
+
+        UpdatePointText();
     }
 
     public void ResetStreak()
     {
         StreakCount = 0;
+    }
+
+    private void UpdatePointText()
+    {
+        if (pointTextIndicator)
+        {
+            // Convert ShootPoints to string and replace "0" with "O"
+            string pointsText = ShootPoints.ToString().Replace("0", "O");
+            pointTextIndicator.text = pointsText;
+        }
     }
 
     private IEnumerator AnimateText()
@@ -134,8 +162,6 @@ public class PlayerPointingSystem : MonoBehaviour
 
     private IEnumerator WiggleButton()
     {
-        
-
         while (true)
         {
             float angle = Mathf.Sin(Time.time * Mathf.PI * wiggleSpeed) * wiggleMagnitude;

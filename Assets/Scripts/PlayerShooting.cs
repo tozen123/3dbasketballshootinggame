@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -55,6 +56,13 @@ public class PlayerShooting : MonoBehaviour
     private float errorRange = 6.0f;
     private float errorRangeX;
     private CameraSystem cameraSystem;
+
+
+    [Header("Spot References")]
+    [SerializeField] private List<Transform> spots; 
+    private Transform currentSpot; 
+    private float spotRange = 2.0f; 
+
     void Start()
     {
         cameraSystem = Camera.main.GetComponent<CameraSystem>();
@@ -63,20 +71,72 @@ public class PlayerShooting : MonoBehaviour
         chargeSlider.gameObject.SetActive(false);
         chargeShootBallButton.onClick.AddListener(StartCharging);
         launchBallButton.onClick.AddListener(Shoot);
+
+        if(spots.Count > 0)
+        {
+            SetNextSpot();
+
+        }
+    }
+    void SetNextSpot()
+    {
+        if (spots.Count > 0)
+        {
+
+            foreach (Transform spot in spots)
+            {
+                spot.GetChild(0).GetComponent<Renderer>().enabled = false; // Hide the spot
+            }
+
+            currentSpot = spots[Random.Range(0, spots.Count)];
+            currentSpot.GetChild(0).GetComponent<Renderer>().enabled = true;  // Show the active spot
+
+        }
+        
+    }
+    bool IsInCorrectSpot()
+    {
+        if (Vector3.Distance(transform.position, currentSpot.position) <= spotRange)
+        {
+            return true;
+        }
+        else
+        {
+            Debug.Log("Player not in the correct spot");
+            return false;
+        }
     }
 
     void Update()
     {
         // condition if the ball is not on the player hand, shoot button is disabled
+        //if (!Ball & !IsInCorrectSpot())
+        //{
+        //    IsBallInHands = false;
+        //    chargeShootBallButton.interactable = false;
+        //}
+        //else
+        //{
+        //    chargeShootBallButton.interactable = true;
+        //}
         if (!Ball)
         {
             IsBallInHands = false;
-            chargeShootBallButton.interactable = false;
         }
-        else
+        if (spots.Count > 0)
         {
-            chargeShootBallButton.interactable = true;
+            
+            if (!IsInCorrectSpot())
+            {
+                chargeShootBallButton.interactable = false;  // Disable button if player is not in the correct spot
+            }
+            else
+            {
+                chargeShootBallButton.interactable = true;  // Enable button if player is in the correct spot
+            }
+
         }
+       
 
         // condition if the ball is in the players hand, it will bounce and if charging it will be on the players over head
         if (IsBallInHands)
@@ -235,32 +295,34 @@ public class PlayerShooting : MonoBehaviour
 
     private void Shoot()
     {
-        if (IsBallInHands)
+        if (!IsBallInHands)
         {
-            cameraSystem.SetTarget(Ball);
-
-            animator.SetBool("ShootCharge", false);
-            chargeShootBallButton.gameObject.SetActive(true);
-            launchBallButton.gameObject.SetActive(false);
-
-            if (!isCharging)
-                return;
-
-            isCharging = false;
-            chargeSlider.gameObject.SetActive(false);
-
-            IsBallInHands = false;
-
-            errorRangeX = Random.Range(-errorRange, errorRange);
-            //errorRangeZ = Random.Range(-errorRange, errorRange);
-
-            IsBallInHands = false;
-            IsBallFlying = true;
-
-            T = 0;
-            playerMovement.canMove = true;
-
+            return; 
         }
+        cameraSystem.SetTarget(Ball);
+
+        animator.SetBool("ShootCharge", false);
+        chargeShootBallButton.gameObject.SetActive(true);
+        launchBallButton.gameObject.SetActive(false);
+
+        if (!isCharging)
+            return;
+
+        isCharging = false;
+        chargeSlider.gameObject.SetActive(false);
+
+        IsBallInHands = false;
+
+        errorRangeX = Random.Range(-errorRange, errorRange);
+        //errorRangeZ = Random.Range(-errorRange, errorRange);
+
+        IsBallInHands = false;
+        IsBallFlying = true;
+
+        T = 0;
+        playerMovement.canMove = true;
+
+        SetNextSpot();
 
     }
 

@@ -11,6 +11,9 @@ public class MainMenuMaster : MonoBehaviour
 
     public void Play(string scene_name)
     {
+        PlayerPrefs.SetInt("Play_ScorePoints", 0);
+        PlayerPrefs.Save();
+
         LoadingScreenManager.Instance.LoadScene(scene_name);
     }
 }
