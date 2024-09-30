@@ -10,6 +10,7 @@ public class SettingsHandler : MonoBehaviour
 
     public void ToggleSettings()
     {
+        ButtonSoundController.Instance.PlayButtonSound();
         isSettingsToggled = !isSettingsToggled;
 
         SettingsPanel.SetActive(isSettingsToggled);

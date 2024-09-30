@@ -34,12 +34,16 @@ public class ResultHandler : MonoBehaviour
             PanelLose.SetActive(true);
         }
     }
-    public void Continue()
+    public void Continue(bool isLose)
     {
-        PlayerPrefs.SetInt("Play_ScorePoints", 0);
-        PlayerPrefs.SetInt("Player_Points", score);
-        PlayerPrefs.Save();
+        if (!isLose)
+        {
+            PlayerPrefs.SetInt("Play_ScorePoints", 0);
+            PlayerPrefs.SetInt("Player_Points", score);
+            PlayerPrefs.Save();
+        }
         LoadingScreenManager.Instance.LoadScene("MainMenu");
+
     }
-    
+
 }

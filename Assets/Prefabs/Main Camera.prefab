@@ -106,7 +106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7cd552f457bcd9e4999f6c09f5f180bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _switchingOffset: {x: 17, y: 8, z: -2}
+  _switchingOffset: {x: 18, y: 8, z: -2}
   target: {fileID: 0}
   smoothSpeed: 0.35
   SwitchingSmoothSpeed: 0.55

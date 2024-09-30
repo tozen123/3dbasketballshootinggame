@@ -27,6 +27,8 @@ public class UISwitcher : MonoBehaviour
 
     public void Toggle()
     {
+        ButtonSoundController.Instance.PlayButtonSound();
+
         isToggled = !isToggled;
 
         if (isToggled)

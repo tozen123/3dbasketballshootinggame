@@ -61,12 +61,22 @@ public class PlayerShooting : MonoBehaviour
     [Header("Spot References")]
     [SerializeField] private List<Transform> spots; 
     private Transform currentSpot; 
-    private float spotRange = 2.0f; 
+    private float spotRange = 2.0f;
+
+
+    [Header("Audio References")]
+    [SerializeField] private float dribbleSoundThreshold = 0.05f;  
+    private float previousBounceValue = 0;
+    [SerializeField] private AudioSource audioSource;  
+    [SerializeField] private AudioClip[] dribbleSounds;
+
+
+    [SerializeField] private bool MenuChar = false;
 
     void Start()
     {
         cameraSystem = Camera.main.GetComponent<CameraSystem>();
-
+        audioSource = GameObject.FindGameObjectWithTag("AudioMaster").GetComponent<AudioSource>();
         launchBallButton.gameObject.SetActive(false);
         chargeSlider.gameObject.SetActive(false);
         chargeShootBallButton.onClick.AddListener(StartCharging);
@@ -148,8 +158,23 @@ public class PlayerShooting : MonoBehaviour
             }
             else
             {
-                Ball.position = PosDribble.position + new Vector3(0, dribblingHeight, 0) * Mathf.Abs(Mathf.Sin(Time.time * dribblingSpeed));
+                float bounceValue = Mathf.Abs(Mathf.Sin(Time.time * dribblingSpeed));
+
+                Ball.position = PosDribble.position + new Vector3(0, dribblingHeight, 0) * bounceValue;
                 playerMovement.haveBall = true;
+
+
+                if (previousBounceValue > bounceValue && bounceValue < dribbleSoundThreshold)
+                {
+
+                    if (!MenuChar)
+                    {
+                        PlayRandomDribbleSound();
+
+                    }
+                }
+
+                previousBounceValue = bounceValue;
             }
         }
         else
@@ -226,7 +251,19 @@ public class PlayerShooting : MonoBehaviour
             Charging();
         }
     }
-
+    private void PlayRandomDribbleSound()
+    {
+        if (dribbleSounds.Length > 0 && audioSource != null)
+        {
+            int randomIndex = Random.Range(0, dribbleSounds.Length);
+            audioSource.clip = dribbleSounds[randomIndex];
+            audioSource.Play();
+        }
+        else
+        {
+            Debug.LogWarning("No dribble sounds assigned or AudioSource missing.");
+        }
+    }
     // Slider Mechanics
     void Charging()
     {

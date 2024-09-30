@@ -10,6 +10,11 @@ public class AudioController : MonoBehaviour
 
     private void Start()
     {
+        if (!volumeSlider)
+        {
+            volumeSlider = GameObject.FindGameObjectWithTag("AudioSlider").GetComponent<Slider>();
+
+        }
         float currentVolume;
         audioMixer.GetFloat("MasterVolume", out currentVolume);
         volumeSlider.value = Mathf.Pow(10, currentVolume / 20);
