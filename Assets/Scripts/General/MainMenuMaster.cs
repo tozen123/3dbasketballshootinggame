@@ -11,6 +11,7 @@ public class MainMenuMaster : MonoBehaviour
 
     public void Play(string scene_name)
     {
+        ButtonSoundController.Instance.PlayButtonSound();
         PlayerPrefs.SetInt("Play_ScorePoints", 0);
         PlayerPrefs.Save();
 

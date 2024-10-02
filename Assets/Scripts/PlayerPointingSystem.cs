@@ -26,6 +26,9 @@ public class PlayerPointingSystem : MonoBehaviour
     [SerializeField] private float wiggleMagnitude;
     [SerializeField] private float wiggleSpeed;
 
+    [Header("Mode")]
+
+    [SerializeField] private bool isArcade = false;
 
     private Vector3 originalScale;
     private Coroutine wiggleCoroutine;
@@ -93,17 +96,25 @@ public class PlayerPointingSystem : MonoBehaviour
 
     public void AddPoint(int toAddPoints)
     {
-        if (StreakCount >= StreakThreshold)
+        if (!isArcade)
         {
-            toAddPoints += StreakBonusPoints;
+            if (StreakCount >= StreakThreshold)
+            {
+                toAddPoints += StreakBonusPoints;
+            }
+
+            ShootPoints += toAddPoints;
+            StreakCount++;
+
+            PlayerPrefs.SetInt("Play_ScorePoints", ShootPoints);
+            PlayerPrefs.Save();
+
+            
         }
-
-        ShootPoints += toAddPoints;
-        StreakCount++;
-
-        // Save the updated score to PlayerPrefs
-        PlayerPrefs.SetInt("Play_ScorePoints", ShootPoints);
-        PlayerPrefs.Save(); // Ensures the points are saved to disk
+        else
+        {
+            ShootPoints += toAddPoints;
+        }
 
         StartCoroutine(AnimateText());
         UpdatePointText();
@@ -113,7 +124,6 @@ public class PlayerPointingSystem : MonoBehaviour
     {
         ShootPoints = 0;
 
-        // Reset the saved points in PlayerPrefs
         PlayerPrefs.SetInt("Play_ScorePoints", ShootPoints);
         PlayerPrefs.Save();
 
@@ -129,7 +139,6 @@ public class PlayerPointingSystem : MonoBehaviour
     {
         if (pointTextIndicator)
         {
-            // Convert ShootPoints to string and replace "0" with "O"
             string pointsText = ShootPoints.ToString().Replace("0", "O");
             pointTextIndicator.text = pointsText;
         }

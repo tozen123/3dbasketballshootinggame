@@ -21,7 +21,20 @@ public class PlayerCustomizer : MonoBehaviour
     public Button yellowShorts;
     public Button yellowShoes;
 
+    public TextMeshProUGUI greenShirtText;
+    public TextMeshProUGUI greenShortsText;
+    public TextMeshProUGUI greenShoesText;
+
+    public TextMeshProUGUI redShirtText;
+    public TextMeshProUGUI redShortsText;
+    public TextMeshProUGUI redShoesText;
+
+    public TextMeshProUGUI yellowShirtText;
+    public TextMeshProUGUI yellowShortsText;
+    public TextMeshProUGUI yellowShoesText;
+
     private int playerPoints;
+
     private Dictionary<string, int> itemCosts = new Dictionary<string, int>()
     {
         { "Shirt_Green", 0 },
@@ -35,23 +48,37 @@ public class PlayerCustomizer : MonoBehaviour
         { "Shoes_Yellow", 400 }
     };
 
+    private string equippedShirt;
+    private string equippedShorts;
+    private string equippedShoes;
+
     void Start()
     {
-        playerPoints = PlayerPrefs.GetInt("Player_Points", 500); 
+        playerPoints = PlayerPrefs.GetInt("Player_Points", 500);
+
+        equippedShirt = PlayerPrefs.GetString("Equipped_Shirt", "Green");
+        equippedShorts = PlayerPrefs.GetString("Equipped_Shorts", "Green");
+        equippedShoes = PlayerPrefs.GetString("Equipped_Shoes", "Green");
+
+        SetDefaultUnlock("Shirt_Green");
+        SetDefaultUnlock("Shorts_Green");
+        SetDefaultUnlock("Shoes_Green");
+
         UpdateSpendableText();
 
-        // Set up button listeners
-        greenShirt.onClick.AddListener(() => UnlockAndEquipSkin("Shirt", "Green"));
-        greenShorts.onClick.AddListener(() => UnlockAndEquipSkin("Shorts", "Green"));
-        greenShoes.onClick.AddListener(() => UnlockAndEquipSkin("Shoes", "Green"));
+        greenShirt.onClick.AddListener(() => UnlockAndEquipSkin("Shirt", "Green", greenShirtText));
+        greenShorts.onClick.AddListener(() => UnlockAndEquipSkin("Shorts", "Green", greenShortsText));
+        greenShoes.onClick.AddListener(() => UnlockAndEquipSkin("Shoes", "Green", greenShoesText));
 
-        redShirt.onClick.AddListener(() => UnlockAndEquipSkin("Shirt", "Red"));
-        redShorts.onClick.AddListener(() => UnlockAndEquipSkin("Shorts", "Red"));
-        redShoes.onClick.AddListener(() => UnlockAndEquipSkin("Shoes", "Red"));
+        redShirt.onClick.AddListener(() => UnlockAndEquipSkin("Shirt", "Red", redShirtText));
+        redShorts.onClick.AddListener(() => UnlockAndEquipSkin("Shorts", "Red", redShortsText));
+        redShoes.onClick.AddListener(() => UnlockAndEquipSkin("Shoes", "Red", redShoesText));
 
-        yellowShirt.onClick.AddListener(() => UnlockAndEquipSkin("Shirt", "Yellow"));
-        yellowShorts.onClick.AddListener(() => UnlockAndEquipSkin("Shorts", "Yellow"));
-        yellowShoes.onClick.AddListener(() => UnlockAndEquipSkin("Shoes", "Yellow"));
+        yellowShirt.onClick.AddListener(() => UnlockAndEquipSkin("Shirt", "Yellow", yellowShirtText));
+        yellowShorts.onClick.AddListener(() => UnlockAndEquipSkin("Shorts", "Yellow", yellowShortsText));
+        yellowShoes.onClick.AddListener(() => UnlockAndEquipSkin("Shoes", "Yellow", yellowShoesText));
+
+        UpdateButtonsText();
     }
 
     private void UpdateSpendableText()
@@ -59,8 +86,10 @@ public class PlayerCustomizer : MonoBehaviour
         spendableText.text = "Points Spendables: " + playerPoints.ToString();
     }
 
-    private void UnlockAndEquipSkin(string itemType, string color)
+    private void UnlockAndEquipSkin(string itemType, string color, TextMeshProUGUI buttonText)
     {
+        ButtonSoundController.Instance.PlayButtonSound();
+
         string key = itemType + "_" + color + "_Unlocked";
         bool isUnlocked = PlayerPrefs.GetInt(key, 0) == 1;
 
@@ -69,26 +98,29 @@ public class PlayerCustomizer : MonoBehaviour
 
         if (isUnlocked)
         {
-            EquipSkin(itemType, color); 
+            EquipSkin(itemType, color);
         }
         else if (playerPoints >= cost)
         {
             playerPoints -= cost;
             PlayerPrefs.SetInt("Player_Points", playerPoints);
-            PlayerPrefs.SetInt(key, 1); 
+            PlayerPrefs.SetInt(key, 1);
             PlayerPrefs.Save();
 
             EquipSkin(itemType, color);
             UpdateSpendableText();
+            buttonText.text = "BOUGHT";
         }
         else
         {
-            Debug.Log("Not enough points to unlock this skin.");
+            DialogManager.Instance.ShowDialog("Not enough points to unlock this skin.");
         }
     }
 
     private void EquipSkin(string itemType, string color)
     {
+        ButtonSoundController.Instance.PlayButtonSound();
+
         switch (itemType)
         {
             case "Shirt":
@@ -98,7 +130,11 @@ public class PlayerCustomizer : MonoBehaviour
                     skinManager.SetShirtToRed();
                 else if (color == "Yellow")
                     skinManager.SetShirtToYellow();
+
+                equippedShirt = color;
+                PlayerPrefs.SetString("Equipped_Shirt", color);
                 break;
+
             case "Shorts":
                 if (color == "Green")
                     skinManager.SetShortsToGreen();
@@ -106,7 +142,11 @@ public class PlayerCustomizer : MonoBehaviour
                     skinManager.SetShortsToRed();
                 else if (color == "Yellow")
                     skinManager.SetShortsToYellow();
+
+                equippedShorts = color;
+                PlayerPrefs.SetString("Equipped_Shorts", color);
                 break;
+
             case "Shoes":
                 if (color == "Green")
                     skinManager.SetShoesToGreen();
@@ -114,9 +154,57 @@ public class PlayerCustomizer : MonoBehaviour
                     skinManager.SetShoesToRed();
                 else if (color == "Yellow")
                     skinManager.SetShoesToYellow();
+
+                equippedShoes = color;
+                PlayerPrefs.SetString("Equipped_Shoes", color);
                 break;
+        }
+
+        PlayerPrefs.Save();
+        UpdateButtonsText();
+    }
+
+    private void UpdateButtonsText()
+    {
+        UpdateButtonText("Shirt", "Green", greenShirtText, equippedShirt);
+        UpdateButtonText("Shirt", "Red", redShirtText, equippedShirt);
+        UpdateButtonText("Shirt", "Yellow", yellowShirtText, equippedShirt);
+
+        UpdateButtonText("Shorts", "Green", greenShortsText, equippedShorts);
+        UpdateButtonText("Shorts", "Red", redShortsText, equippedShorts);
+        UpdateButtonText("Shorts", "Yellow", yellowShortsText, equippedShorts);
+
+        UpdateButtonText("Shoes", "Green", greenShoesText, equippedShoes);
+        UpdateButtonText("Shoes", "Red", redShoesText, equippedShoes);
+        UpdateButtonText("Shoes", "Yellow", yellowShoesText, equippedShoes);
+    }
+
+    private void UpdateButtonText(string itemType, string color, TextMeshProUGUI buttonText, string equippedItem)
+    {
+        string key = itemType + "_" + color + "_Unlocked";
+        bool isUnlocked = PlayerPrefs.GetInt(key, 0) == 1;
+
+        if (color == equippedItem)
+        {
+            buttonText.text = "EQUIPPED";
+        }
+        else if (isUnlocked)
+        {
+            buttonText.text = "BOUGHT";
+        }
+        else
+        {
+            int cost = itemCosts[itemType + "_" + color];
+            buttonText.text = cost == 0 ? "FREE" : cost.ToString();
         }
     }
 
-  
+    private void SetDefaultUnlock(string itemKey)
+    {
+        if (PlayerPrefs.GetInt(itemKey + "_Unlocked", 0) == 0)
+        {
+            PlayerPrefs.SetInt(itemKey + "_Unlocked", 1); 
+            PlayerPrefs.Save();
+        }
+    }
 }
