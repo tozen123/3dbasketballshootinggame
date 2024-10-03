@@ -25,6 +25,13 @@ public class UISwitcher : MonoBehaviour
         Switch.SetActive(false);
     }
 
+    public void OpenAbout()
+    {
+        DialogManager.Instance.ShowDialog("Game Developed By: \n\nJiro Jaro \nGene Moises Narvas \n\nMade With Unity");
+
+    }
+
+    // toggling method for ui switching 
     public void Toggle()
     {
         ButtonSoundController.Instance.PlayButtonSound();
@@ -42,6 +49,7 @@ public class UISwitcher : MonoBehaviour
             StartCoroutine(FadeIn(mainCanvasGroup, Main));
         }
     }
+    // fade animation 
 
     private IEnumerator FadeIn(CanvasGroup canvasGroup, GameObject target)
     {
@@ -59,6 +67,7 @@ public class UISwitcher : MonoBehaviour
 
     }
 
+    // fade animation 
     private IEnumerator FadeOut(CanvasGroup canvasGroup, GameObject target)
     {
         float elapsedTime = 0f;

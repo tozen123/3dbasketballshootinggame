@@ -33,6 +33,7 @@ public class PlayerPointingSystem : MonoBehaviour
     private Vector3 originalScale;
     private Coroutine wiggleCoroutine;
 
+    // Set as Singleton Class
     private void Awake()
     {
         if (Instance == null)
@@ -66,6 +67,7 @@ public class PlayerPointingSystem : MonoBehaviour
             return;
         }
 
+        // If streak is achieve add effects
         if (StreakCount >= StreakThreshold)
         {
             if (wiggleCoroutine == null)
@@ -89,11 +91,13 @@ public class PlayerPointingSystem : MonoBehaviour
         }
     }
 
+    // get point method
     public int GetPoint()
     {
         return ShootPoints;
     }
 
+    // add point method
     public void AddPoint(int toAddPoints)
     {
         if (!isArcade)
@@ -120,6 +124,7 @@ public class PlayerPointingSystem : MonoBehaviour
         UpdatePointText();
     }
 
+    // reset to zero points, for arcade missing shots
     public void ResetPoint()
     {
         ShootPoints = 0;
@@ -130,6 +135,7 @@ public class PlayerPointingSystem : MonoBehaviour
         UpdatePointText();
     }
 
+    // reset streak when missed
     public void ResetStreak()
     {
         StreakCount = 0;
@@ -144,6 +150,7 @@ public class PlayerPointingSystem : MonoBehaviour
         }
     }
 
+    // animation
     private IEnumerator AnimateText()
     {
         float elapsedTime = 0f;

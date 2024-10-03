@@ -48,8 +48,8 @@ MonoBehaviour:
   loadingScreen: {fileID: 2574000267429802474}
   loadingText: {fileID: 6449609920967927537}
   canvasGroup: {fileID: 767585924525250556}
-  fadeDuration: 0.5
-  staticDuration: 2
+  fadeDuration: 0.25
+  staticDuration: 0.5
 --- !u!1 &1522211533045333115
 GameObject:
   m_ObjectHideFlags: 0
@@ -117,8 +117,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 9d7b28ea39ce5a94b8bbb9195b429b2b, type: 2}
-  m_sharedMaterial: {fileID: 582806314829216855, guid: 9d7b28ea39ce5a94b8bbb9195b429b2b, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

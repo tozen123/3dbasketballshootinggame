@@ -36,14 +36,18 @@ public class ResultHandler : MonoBehaviour
     }
     public void Continue(bool isLose)
     {
+        ButtonSoundController.Instance.PlayButtonSound();
         if (!isLose)
         {
+            int currentPlayerPoints = PlayerPrefs.GetInt("Player_Points", 0); 
+
+            int updatedPoints = currentPlayerPoints + score;
+
             PlayerPrefs.SetInt("Play_ScorePoints", 0);
-            PlayerPrefs.SetInt("Player_Points", score);
+            PlayerPrefs.SetInt("Player_Points", updatedPoints);
             PlayerPrefs.Save();
         }
         LoadingScreenManager.Instance.LoadScene("MainMenu");
-
     }
 
 }

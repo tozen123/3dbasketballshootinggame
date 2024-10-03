@@ -8,13 +8,21 @@ public class AudioController : MonoBehaviour
     [SerializeField] private AudioMixer audioMixer;
     [SerializeField] private Slider volumeSlider;
 
+    [Header("Result Scene")]
+    [SerializeField] private bool isResultScene = false;
+
+
     private void Start()
     {
-        if (!volumeSlider)
+        if (isResultScene)
         {
-            volumeSlider = GameObject.FindGameObjectWithTag("AudioSlider").GetComponent<Slider>();
+            if (!volumeSlider)
+            {
+                volumeSlider = GameObject.FindGameObjectWithTag("AudioSlider").GetComponent<Slider>();
 
+            }
         }
+        
         float currentVolume;
         audioMixer.GetFloat("MasterVolume", out currentVolume);
         volumeSlider.value = Mathf.Pow(10, currentVolume / 20);

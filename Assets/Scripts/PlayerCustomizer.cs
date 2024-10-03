@@ -6,8 +6,16 @@ using TMPro;
 
 public class PlayerCustomizer : MonoBehaviour
 {
+    [Header("Points Spendables")]
+    [SerializeField] private int startingPoints;
+
+
+    [Header("References")]
     [SerializeField] private TextMeshProUGUI spendableText;
     [SerializeField] private PlayerSkinManager skinManager;
+
+
+    [Header("Skin References")]
 
     public Button greenShirt;
     public Button greenShorts;
@@ -54,7 +62,7 @@ public class PlayerCustomizer : MonoBehaviour
 
     void Start()
     {
-        playerPoints = PlayerPrefs.GetInt("Player_Points", 500);
+        playerPoints = PlayerPrefs.GetInt("Player_Points", startingPoints);
 
         equippedShirt = PlayerPrefs.GetString("Equipped_Shirt", "Green");
         equippedShorts = PlayerPrefs.GetString("Equipped_Shorts", "Green");
@@ -109,7 +117,7 @@ public class PlayerCustomizer : MonoBehaviour
 
             EquipSkin(itemType, color);
             UpdateSpendableText();
-            buttonText.text = "BOUGHT";
+            buttonText.text = "EQUIPPED";
         }
         else
         {

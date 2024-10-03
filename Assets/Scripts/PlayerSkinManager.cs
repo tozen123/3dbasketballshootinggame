@@ -27,31 +27,26 @@ public class PlayerSkinManager : MonoBehaviour
 
     private void Start()
     {
-        // Load saved skins for shirt, shorts, and shoes
         LoadSkin();
     }
 
-    // Save the current selected skins for each part to PlayerPrefs
     public void SaveSkin(string part, string color)
     {
         PlayerPrefs.SetString(part, color);
         PlayerPrefs.Save();
     }
 
-    // Load saved skins for each part from PlayerPrefs
     public void LoadSkin()
     {
-        string savedShirtColor = PlayerPrefs.GetString("PlayerShirtColor", "Green"); // Default to "Green"
-        string savedShortsColor = PlayerPrefs.GetString("PlayerShortsColor", "Green"); // Default to "Green"
-        string savedShoesColor = PlayerPrefs.GetString("PlayerShoesColor", "Green"); // Default to "Green"
+        string savedShirtColor = PlayerPrefs.GetString("PlayerShirtColor", "Green"); 
+        string savedShortsColor = PlayerPrefs.GetString("PlayerShortsColor", "Green"); 
+        string savedShoesColor = PlayerPrefs.GetString("PlayerShoesColor", "Green"); 
 
-        // Load each part separately
         SetShirt(savedShirtColor);
         SetShorts(savedShortsColor);
         SetShoes(savedShoesColor);
     }
 
-    // Methods to set the jersey parts individually
     public void SetShirt(string color)
     {
         switch (color)
@@ -67,7 +62,6 @@ public class PlayerSkinManager : MonoBehaviour
                 break;
         }
 
-        // Save the selected shirt color
         SaveSkin("PlayerShirtColor", color);
     }
 
@@ -86,7 +80,6 @@ public class PlayerSkinManager : MonoBehaviour
                 break;
         }
 
-        // Save the selected shorts color
         SaveSkin("PlayerShortsColor", color);
     }
 
@@ -105,11 +98,9 @@ public class PlayerSkinManager : MonoBehaviour
                 break;
         }
 
-        // Save the selected shoes color
         SaveSkin("PlayerShoesColor", color);
     }
 
-    // Helper methods to quickly set a specific color for each part
     public void SetShirtToRed()
     {
         SetShirt("Red");

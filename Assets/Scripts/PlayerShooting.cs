@@ -39,7 +39,11 @@ public class PlayerShooting : MonoBehaviour
     [SerializeField] private bool isIncreasing = true;
 
 
- 
+    [SerializeField] private float correctShotRangeMin = 0.45f;
+    [SerializeField] private float correctShotRangeMax = 0.75f;
+
+
+
 
     [Header("Dribbling Attributes")]
     [SerializeField] private float dribblingSpeed = 5f;
@@ -203,13 +207,13 @@ public class PlayerShooting : MonoBehaviour
 
             // slider mechanics for accuracy of the shot
             // also determines if the ball is going to the net accurately or not
-            if (chargeSlider.value > 0.50f && chargeSlider.value < 0.60f)
+            if (chargeSlider.value > correctShotRangeMin && chargeSlider.value < correctShotRangeMax)
             {
                 B = Target.position;
             }
             else
             {
-               
+               // error shot
                 B = Target.position + new Vector3(errorRangeX, 0, -3.0f);
 
                 if (isArcade)
@@ -251,6 +255,7 @@ public class PlayerShooting : MonoBehaviour
             Charging();
         }
     }
+    // dribble sounds using randomizer to add dynamics
     private void PlayRandomDribbleSound()
     {
         if (dribbleSounds.Length > 0 && audioSource != null)
@@ -287,6 +292,7 @@ public class PlayerShooting : MonoBehaviour
         }
     }
 
+    // when the player is charging his shot
     private void StartCharging()
     {
         if (isCharging)
@@ -310,6 +316,7 @@ public class PlayerShooting : MonoBehaviour
 
         launchBallButton.gameObject.SetActive(true);
 
+        // make the player face the net
         LookAtTarget(Target.transform);
 
         playerMovement.canMove = false;

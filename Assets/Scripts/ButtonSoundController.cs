@@ -15,7 +15,6 @@ public class ButtonSoundController : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);  
         }
         else
         {
