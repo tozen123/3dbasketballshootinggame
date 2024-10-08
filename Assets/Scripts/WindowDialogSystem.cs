@@ -54,6 +54,8 @@ public class WindowDialogSystem : MonoBehaviour
 
     private void OnOkButtonClicked()
     {
+        ButtonSoundController.Instance.PlayButtonSound();
+
         onOkClicked?.Invoke();
         popUpWindow.SetActive(false);
     }

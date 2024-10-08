@@ -17,4 +17,22 @@ public class MainMenuMaster : MonoBehaviour
 
         LoadingScreenManager.Instance.LoadScene(scene_name);
     }
+
+    public void ExitGame()
+    {
+        ButtonSoundController.Instance.PlayButtonSound();
+
+        WindowActionDialogSystem.Instance
+            .SetTitle("Exit Game")
+            .SetMessage("Are you sure you want to exit the game?")
+            .OnYesClick(() =>
+            {
+                Application.Quit();  
+            })
+            .OnNoClick(() =>
+            {
+
+            })
+            .Show();
+    }
 }
