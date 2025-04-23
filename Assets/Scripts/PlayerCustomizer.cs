@@ -9,14 +9,11 @@ public class PlayerCustomizer : MonoBehaviour
     [Header("Points Spendables")]
     [SerializeField] private int startingPoints;
 
-
     [Header("References")]
     [SerializeField] private TextMeshProUGUI spendableText;
     [SerializeField] private PlayerSkinManager skinManager;
 
-
     [Header("Skin References")]
-
     public Button greenShirt;
     public Button greenShorts;
     public Button greenShoes;
@@ -106,22 +103,55 @@ public class PlayerCustomizer : MonoBehaviour
 
         if (isUnlocked)
         {
+            // If the item is already unlocked, directly equip it without buying
             EquipSkin(itemType, color);
-        }
-        else if (playerPoints >= cost)
-        {
-            playerPoints -= cost;
-            PlayerPrefs.SetInt("Player_Points", playerPoints);
-            PlayerPrefs.SetInt(key, 1);
-            PlayerPrefs.Save();
-
-            EquipSkin(itemType, color);
-            UpdateSpendableText();
             buttonText.text = "EQUIPPED";
         }
         else
         {
-            DialogManager.Instance.ShowDialog("Not enough points to unlock this skin.");
+            // Item is not unlocked, show dialog to buy
+            if (playerPoints >= cost)
+            {
+                // Show the "Buy and Wear" or "Buy Only" options
+                WindowActionDialogSystem.Instance.ShowWearOrBuyDialog(
+                    itemType,
+                    color,
+                    cost,
+                    onWear: () =>
+                    {
+                        // Deduct points, unlock, and equip the item immediately
+                        playerPoints -= cost;
+                        PlayerPrefs.SetInt("Player_Points", playerPoints);
+                        PlayerPrefs.SetInt(key, 1);
+                        PlayerPrefs.Save();
+
+                        EquipSkin(itemType, color);
+                        UpdateSpendableText();
+                        buttonText.text = "EQUIPPED";
+                    },
+                    onBuy: () =>
+                    {
+                        // Deduct points and unlock the item without equipping it
+                        playerPoints -= cost;
+                        PlayerPrefs.SetInt("Player_Points", playerPoints);
+                        PlayerPrefs.SetInt(key, 1);
+                        PlayerPrefs.Save();
+
+                        UpdateSpendableText();
+                        buttonText.text = "BOUGHT";
+                    }
+                   
+                );
+            }
+            else
+            {
+                // Insufficient points, show message using WindowDialogSystem
+                WindowDialogSystem.Instance
+                    .SetTitle("Insufficient Points")
+                    .SetMessage("You do not have enough points to buy this item.")
+                    .OnClick(() => WindowDialogSystem.Instance.Hide())
+                    .Show();
+            }
         }
     }
 
@@ -211,7 +241,7 @@ public class PlayerCustomizer : MonoBehaviour
     {
         if (PlayerPrefs.GetInt(itemKey + "_Unlocked", 0) == 0)
         {
-            PlayerPrefs.SetInt(itemKey + "_Unlocked", 1); 
+            PlayerPrefs.SetInt(itemKey + "_Unlocked", 1);
             PlayerPrefs.Save();
         }
     }

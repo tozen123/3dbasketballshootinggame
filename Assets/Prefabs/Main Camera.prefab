@@ -44,7 +44,7 @@ Camera:
   m_GameObject: {fileID: 2408871614210346178}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 1
   m_BackGroundColor: {r: 0.16037738, g: 0.16037738, b: 0.16037738, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -128,14 +128,14 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0.002292077
-      value: 0.24728638
-      inSlope: 0.0739501
-      outSlope: 0.0739501
+      time: 0.0074544447
+      value: 0.50263333
+      inSlope: 0.65295684
+      outSlope: 0.65295684
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.09793921
+      outWeight: 0.13524492
     - serializedVersion: 3
       time: 0.9943436
       value: 0.00068765297

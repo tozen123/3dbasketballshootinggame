@@ -12,6 +12,7 @@ public class WindowActionDialogSystem : MonoBehaviour
     public TextMeshProUGUI messageText;
     public Button yesButton;
     public Button noButton;
+    public Button closeButton;
 
     private Action onYesClicked;
     private Action onNoClicked;
@@ -53,13 +54,27 @@ public class WindowActionDialogSystem : MonoBehaviour
         return this;
     }
 
+    public WindowActionDialogSystem SetYesButtonText(string text)
+    {
+        yesButton.GetComponentInChildren<TextMeshProUGUI>().text = text;
+        return this;
+    }
+
+    public WindowActionDialogSystem SetNoButtonText(string text)
+    {
+        noButton.GetComponentInChildren<TextMeshProUGUI>().text = text;
+        return this;
+    }
+
     public void Show()
     {
         yesButton.onClick.RemoveAllListeners();
         noButton.onClick.RemoveAllListeners();
+        closeButton.onClick.RemoveAllListeners();
 
         yesButton.onClick.AddListener(OnYesButtonClicked);
         noButton.onClick.AddListener(OnNoButtonClicked);
+        closeButton.onClick.AddListener(OnCloseButtonClicked); // Add the close button action
 
         popUpWindow.SetActive(true);
     }
@@ -67,7 +82,6 @@ public class WindowActionDialogSystem : MonoBehaviour
     private void OnYesButtonClicked()
     {
         ButtonSoundController.Instance.PlayButtonSound();
-
         onYesClicked?.Invoke();
         popUpWindow.SetActive(false);
     }
@@ -75,13 +89,29 @@ public class WindowActionDialogSystem : MonoBehaviour
     private void OnNoButtonClicked()
     {
         ButtonSoundController.Instance.PlayButtonSound();
-
         onNoClicked?.Invoke();
         popUpWindow.SetActive(false);
+    }
+
+    private void OnCloseButtonClicked()
+    {
+        ButtonSoundController.Instance.PlayButtonSound();
+        Hide();
     }
 
     public void Hide()
     {
         popUpWindow.SetActive(false);
+    }
+
+    public void ShowWearOrBuyDialog(string itemType, string color, int cost, Action onWear, Action onBuy)
+    {
+        SetTitle(itemType + " Options")
+            .SetMessage("Do you want to wear or buy the " + color + " " + itemType.ToLower() + "? It costs " + cost + " points.")
+            .SetYesButtonText("Wear")
+            .SetNoButtonText("Buy Only")
+            .OnYesClick(onWear)
+            .OnNoClick(onBuy)
+            .Show();
     }
 }

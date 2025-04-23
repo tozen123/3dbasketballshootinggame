@@ -29,7 +29,7 @@ public class UISwitcher : MonoBehaviour
     {
         ButtonSoundController.Instance.PlayButtonSound();
 
-        DialogManager.Instance.ShowDialog("Game Developed By: \n\nJiro Jaro \nGene Moises Narvas \n\nMade With Unity");
+        DialogManager.Instance.ShowDialog("Game Developed By: \n\nJiro Jaro \nGene Moises Narvas \nKenneth Baran \n\nMade With Unity");
 
     }
 

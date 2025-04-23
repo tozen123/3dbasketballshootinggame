@@ -21,7 +21,7 @@ public class CameraController : MonoBehaviour
     }
     IEnumerator Shaking()
     {
-        Vector3 startPosition = transform.position;
+        Vector3 startPosition = transform.localPosition;
         float elapsedTime = 0f;
         while (elapsedTime < duration)
         {
